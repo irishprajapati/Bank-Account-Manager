@@ -10,7 +10,7 @@ import java.util.List;
 public class AccountDAO {
     static Scanner scanner = new Scanner(System.in);
     public void createAccount(Account a) throws SQLException{
-        String sql = "INSERT INTO accounts(ownerName, accountType, balance, createdDate) WHERE values(?,?,?,?)";
+        String sql = "INSERT INTO accounts(owner_name, account_type, balance, created_date) VALUES(?,?,?,?)";
         try(Connection con = DBConnection.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
             ps.setString(1, a.getOwnerName());
@@ -70,7 +70,7 @@ public class AccountDAO {
         return accounts;
     }
     public void updateBalance(int accountId, double newBalance, Connection con) throws SQLException{
-        String sql = "UPDATE accounts SEET balance = ? WHERE id = ?";
+        String sql = "UPDATE accounts SET balance = ? WHERE id = ?";
         try(PreparedStatement ps = con.prepareStatement(sql)){
             ps.setDouble(1, newBalance);
             ps.setInt(2, accountId);
@@ -81,13 +81,18 @@ public class AccountDAO {
         }
     }
     public void deleteAccount(int id) throws SQLException{
-    try{
-        System.out.println("Enter account Id: ");
-        int accountId = scanner.nextInt();
-        AccountDAO accountDAO = new AccountDAO();
-        accountDAO.deleteAccount(accountId);
-    }catch (SQLException e){
-        System.out.println("Database exception: " + e.getMessage());
+    String sql = "DELETE * FROM accounts WHERE id = ?";
+    try(Connection con = DBConnection.getConnection();
+    PreparedStatement ps = con.prepareStatement(sql)){
+        ps.setInt(1, id);
+        int rows = 0;
+        if(rows==0){
+            System.out.println("Account not found with id: " + id);
+        }else{
+            System.out.println("Account deleted successfully");
+        }
+        }catch (SQLException ex){
+            System.out.println("Database exception: " + ex.getMessage());
     }
     }
     }
